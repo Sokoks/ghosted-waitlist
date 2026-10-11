@@ -1,20 +1,10 @@
 /**
  * Ghosted Waitlist → Google Sheets
- *
- * SETUP:
- * 1. Otvori Google Sheets i napravi novu tablicu (npr. "Ghosted Waitlist")
- * 2. U prvi red stavi zaglavlja:
- *    Timestamp | Contact Type | Instagram | Email | Source
- * 3. Extensions → Apps Script
- * 4. Obriši defaultni kod i zalijepi OVAJ cijeli fajl
- * 5. Spremi projekt
- * 6. Deploy → New deployment → Type: Web app
- *    - Execute as: Me
- *    - Who has access: Anyone
- * 7. Kopiraj Web App URL i zalijepi ga u config.js kao googleScriptUrl
+ * Spreadsheet: https://docs.google.com/spreadsheets/d/1-6xNrx36wK9gh7UrYDMvKqRXJBP7_HzQpTSOquvMY9U
  */
 
-const SHEET_NAME = "Waitlist"; // ili ime tvog lista/sheeta
+const SPREADSHEET_ID = "1-6xNrx36wK9gh7UrYDMvKqRXJBP7_HzQpTSOquvMY9U";
+const SHEET_NAME = "Waitlist";
 
 function doPost(e) {
   try {
@@ -46,7 +36,7 @@ function doGet() {
 }
 
 function getOrCreateSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   let sheet = ss.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
