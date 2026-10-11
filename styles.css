@@ -101,19 +101,21 @@ code {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  width: 100%;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  /* solid bg — backdrop-filter breaks position:fixed in Safari/iOS */
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 main {
-  padding-top: 4.5rem;
+  padding-top: 4.75rem;
 }
 
 .logo {
