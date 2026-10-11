@@ -35,6 +35,20 @@
   applyTheme(getPreferredTheme());
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  const appVideo = document.getElementById("app-video");
+  if (appVideo) {
+    appVideo.muted = true;
+    appVideo.playsInline = true;
+    const tryPlay = () => {
+      const playPromise = appVideo.play();
+      if (playPromise?.catch) playPromise.catch(() => {});
+    };
+    tryPlay();
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) tryPlay();
+    });
+  }
+
   themeToggle?.addEventListener("click", () => {
     const next =
       html.getAttribute("data-theme") === "dark" ? "light" : "dark";
