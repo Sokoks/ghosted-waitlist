@@ -17,11 +17,9 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=17" />
+    <link rel="stylesheet" href="styles.css?v=18" />
   </head>
   <body>
-    <div class="page-bg" aria-hidden="true"></div>
-
     <header class="topbar">
       <a class="logo" href="#top" aria-label="Ghosted početna">Ghosted</a>
       <button
@@ -45,7 +43,9 @@
       </button>
     </header>
 
-    <main id="top">
+    <div class="page-scroll" id="page-scroll">
+      <div class="page-bg" aria-hidden="true"></div>
+      <main id="top">
       <section class="hero">
         <div class="hero__copy">
           <p class="brand-mark">Ghosted</p>
@@ -122,9 +122,10 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <p>© <span id="year"></span> Ghosted. Sva prava pridržana.</p>
-    </footer>
+      <footer class="footer">
+        <p>© <span id="year"></span> Ghosted. Sva prava pridržana.</p>
+      </footer>
+    </div>
 
     <div class="modal" id="waitlist-modal" hidden>
       <div class="modal__backdrop" data-close-modal></div>
