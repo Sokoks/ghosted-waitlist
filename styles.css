@@ -283,6 +283,33 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
   .section__head {
     margin-bottom: 1rem;
   }
+
+  .topbar {
+    top: 0;
+    left: 0;
+    right: 0;
+    padding-top: calc(constant(safe-area-inset-top, 0px) + 0.75rem);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    padding-bottom: 0.75rem;
+    padding-left: calc(1.25rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(1.25rem + env(safe-area-inset-right, 0px));
+    min-height: calc(env(safe-area-inset-top, 0px) + 3.75rem);
+    background: var(--bg);
+  }
+
+  /* Keep hero title below fixed topbar + iOS Safari overlay chrome */
+  main {
+    padding-top: calc(constant(safe-area-inset-top, 0px) + 7.25rem);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 7.25rem);
+  }
+
+  .hero {
+    padding-top: 0.35rem;
+  }
+
+  .brand-mark {
+    font-size: 2.65rem;
+  }
 }
 
 .btn {
