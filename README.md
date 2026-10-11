@@ -41,12 +41,29 @@ Skripta automatski kreira list `Waitlist` sa stupcima:
 
 | Timestamp | Contact Type | Instagram | Email | Source |
 
-## Deploy
+## Deploy (ghosted.app)
 
-Možeš hostati bilo gdje kao statički site:
+Kod je na **privatnom** GitHub repou: https://github.com/Sokoks/ghosted-waitlist
 
-- [Netlify Drop](https://app.netlify.com/drop)
-- Vercel / Cloudflare Pages
-- GitHub Pages
+Besplatni GitHub Pages **ne radi** na privatnim repovima. Za javni site + privatni kod:
 
-Samo uploadaj cijeli folder (nakon što si postavio `config.js`).
+### Cloudflare Pages (preporučeno)
+
+1. Idi na https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+2. Spoji GitHub i odaberi `Sokoks/ghosted-waitlist`
+3. Build settings: Framework preset **None**, Build command prazno, Output directory `/` (ili ostavi root)
+4. Deploy
+5. **Custom domains** → dodaj `ghosted.app` i `www.ghosted.app`
+
+### DNS kod registrara domene
+
+| Type  | Name | Value |
+|-------|------|--------|
+| CNAME | `@` ili `ghosted.app` | `<tvoj-project>.pages.dev` (Cloudflare ti da točan) |
+| CNAME | `www` | `<tvoj-project>.pages.dev` |
+
+Ako registrar ne podržava CNAME na `@`, koristi Cloudflare DNS (nameservers) ili A/ALIAS zapise koje Cloudflare pokaže.
+
+### Alternativa: javni GitHub repo + GitHub Pages
+
+Ako želiš hostati direktno na GitHubu, repo mora biti **public**, zatim Pages → Custom domain → `ghosted.app`.
