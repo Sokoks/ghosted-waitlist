@@ -283,6 +283,15 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
   .section__head {
     margin-bottom: 1rem;
   }
+
+  .video-section {
+    margin-top: 5vh;
+    padding-top: 1.25rem;
+  }
+
+  .video-section .section__head {
+    margin-bottom: 1rem;
+  }
 }
 
 .btn {
