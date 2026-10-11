@@ -13,23 +13,29 @@
     <title>Ghosted — Waitlist</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
       (function () {
         var w = window;
         var ua = navigator.userAgent || "";
-        var ref = document.referrer || "";
+        var tw = w.Telegram && w.Telegram.WebApp;
         var isTg =
           /Telegram/i.test(ua) ||
-          /t\.me|telegram\.(org|me)/i.test(ref) ||
           !!w.TelegramWebviewProxy ||
           !!w.TelegramWebview ||
-          !!(w.Telegram && w.Telegram.WebApp) ||
           !!(
             w.webkit &&
             w.webkit.messageHandlers &&
             w.webkit.messageHandlers.TelegramWebviewProxy
-          );
-        if (isTg) document.documentElement.classList.add("is-telegram");
+          ) ||
+          !!(tw && (tw.initData || (tw.platform && tw.platform !== "unknown")));
+        if (isTg) {
+          document.documentElement.classList.add("is-telegram");
+          try {
+            tw.ready();
+            tw.expand();
+          } catch (e) {}
+        }
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,31 +44,43 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Inline so Safari/Telegram cannot keep a broken cached header -->
     <style>
       .brand-mark {
         display: none !important;
+      }
+      .tg-safe {
+        display: none;
+        height: 0;
+        background: var(--bg, #07111f);
       }
       .topbar {
         position: sticky !important;
         top: 0 !important;
         transform: none !important;
         -webkit-transform: none !important;
+        padding: 0.75rem 1.25rem !important;
         padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important;
+        min-height: 0 !important;
       }
       main {
         padding-top: 0 !important;
       }
-      /* Telegram in-app browser draws its own top chrome without safe-area */
-      html.is-telegram .topbar {
-        padding-top: calc(env(safe-area-inset-top, 0px) + 5.25rem) !important;
+      /* Telegram: keep topbar compact, add empty spacer under TG UI instead */
+      html.is-telegram .tg-safe {
+        display: block;
+        height: 52px;
       }
-      html.is-telegram .hero {
-        padding-top: 1.25rem !important;
+      html.is-telegram .topbar {
+        position: relative !important;
+        top: auto !important;
+        padding: 0.75rem 1.25rem !important;
       }
       @media (min-width: 768px) {
         .brand-mark {
           display: block !important;
+        }
+        .tg-safe {
+          display: none !important;
         }
         .topbar {
           position: fixed !important;
@@ -71,6 +89,7 @@
           -webkit-transform: translate3d(0, 0, 0) !important;
         }
         html.is-telegram .topbar {
+          position: fixed !important;
           padding: 1rem 2rem !important;
         }
         main {
@@ -78,10 +97,11 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="g-31.css" />
+    <link rel="stylesheet" href="g-32.css" />
   </head>
   <body>
     <div class="page-bg" aria-hidden="true"></div>
+    <div class="tg-safe" aria-hidden="true"></div>
 
     <header class="topbar">
       <a class="logo" href="#top" aria-label="Ghosted početna">Ghosted</a>
@@ -299,6 +319,6 @@
     </div>
 
     <script src="config.js?v=6"></script>
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
   </body>
 </html>

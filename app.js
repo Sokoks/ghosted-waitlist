@@ -35,18 +35,17 @@
   applyTheme(getPreferredTheme());
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  // Telegram in-app browser: push content below its overlay chrome
-  const ua = navigator.userAgent || "";
+  const tw = window.Telegram?.WebApp;
   const isTelegram =
     html.classList.contains("is-telegram") ||
-    /Telegram/i.test(ua) ||
+    /Telegram/i.test(navigator.userAgent || "") ||
     !!window.TelegramWebviewProxy ||
-    !!(window.Telegram && window.Telegram.WebApp);
+    !!(tw && (tw.initData || (tw.platform && tw.platform !== "unknown")));
   if (isTelegram) {
     html.classList.add("is-telegram");
     try {
-      window.Telegram?.WebApp?.ready?.();
-      window.Telegram?.WebApp?.expand?.();
+      tw?.ready?.();
+      tw?.expand?.();
     } catch {
       /* ignore */
     }
