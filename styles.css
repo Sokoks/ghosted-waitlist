@@ -96,7 +96,7 @@ code {
 }
 
 .topbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -105,16 +105,14 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: calc(env(safe-area-inset-top, 0px) + 0.75rem) 1.25rem 0.75rem;
   /* solid bg — backdrop-filter breaks position:fixed in Safari/iOS */
   background: var(--bg);
   border-bottom: 1px solid var(--line);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
 }
 
 main {
-  padding-top: 4.75rem;
+  padding-top: 0;
 }
 
 .logo {
@@ -188,6 +186,7 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
 }
 
 .brand-mark {
+  display: none;
   margin: 0 0 0.4rem;
   font-family: var(--font-display);
   font-size: 3rem;
@@ -282,28 +281,6 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
 
   .section__head {
     margin-bottom: 1rem;
-  }
-
-  /* iOS Safari breaks position:fixed headers — keep topbar in normal flow */
-  .topbar {
-    position: sticky;
-    top: 0;
-    transform: none;
-    -webkit-transform: none;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
-    padding-bottom: 0.75rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    min-height: 0;
-  }
-
-  main {
-    padding-top: 0;
-  }
-
-  /* One "Ghosted" on phone — topbar only, no giant title under Safari chrome */
-  .brand-mark {
-    display: none;
   }
 
   .hero {
@@ -653,6 +630,23 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
 }
 
 @media (min-width: 768px) {
+  .topbar {
+    position: fixed;
+    top: 0;
+    padding: 1rem 2rem;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+
+  main {
+    padding-top: 4.75rem;
+  }
+
+  .brand-mark {
+    display: block;
+    font-size: 4.75rem;
+  }
+
   .topbar,
   .hero,
   .section,
@@ -666,10 +660,6 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
     align-content: center;
     padding-top: 3.5rem;
     padding-bottom: 3.5rem;
-  }
-
-  .brand-mark {
-    font-size: 4.75rem;
   }
 
   .hero h1 {

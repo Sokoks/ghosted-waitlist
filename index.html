@@ -11,13 +11,45 @@
       content="Ghosted — pridruži se waitlistu i budi među prvima koji isprobaju aplikaciju."
     />
     <title>Ghosted — Waitlist</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=29" />
+    <!-- Inline so Safari cannot keep the broken old header after a CSS cache hit -->
+    <style>
+      .brand-mark {
+        display: none !important;
+      }
+      .topbar {
+        position: sticky !important;
+        top: 0 !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+        padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important;
+      }
+      main {
+        padding-top: 0 !important;
+      }
+      @media (min-width: 768px) {
+        .brand-mark {
+          display: block !important;
+        }
+        .topbar {
+          position: fixed !important;
+          padding: 1rem 2rem !important;
+          transform: translate3d(0, 0, 0) !important;
+          -webkit-transform: translate3d(0, 0, 0) !important;
+        }
+        main {
+          padding-top: 4.75rem !important;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="g-30.css" />
   </head>
   <body>
     <div class="page-bg" aria-hidden="true"></div>
