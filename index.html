@@ -49,9 +49,8 @@
         display: none !important;
       }
       .tg-safe {
-        display: none;
-        height: 0;
-        background: var(--bg, #07111f);
+        display: none !important;
+        height: 0 !important;
       }
       .topbar {
         position: sticky !important;
@@ -65,15 +64,11 @@
       main {
         padding-top: 0 !important;
       }
-      /* Telegram: keep topbar compact, add empty spacer under TG UI instead */
-      html.is-telegram .tg-safe {
-        display: block;
-        height: 52px;
-      }
+      /* Telegram webview already sits below TG chrome — keep header tight */
       html.is-telegram .topbar {
         position: relative !important;
         top: auto !important;
-        padding: 0.75rem 1.25rem !important;
+        padding: 0.5rem 1.15rem !important;
       }
       @media (min-width: 768px) {
         .brand-mark {
@@ -97,7 +92,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="g-32.css" />
+    <link rel="stylesheet" href="g-33.css" />
   </head>
   <body>
     <div class="page-bg" aria-hidden="true"></div>
