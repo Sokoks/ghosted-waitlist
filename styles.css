@@ -407,9 +407,10 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
 
 .social-icons {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1.75rem;
+  gap: 1.5rem 1.75rem;
 }
 
 .social-icons__link {
