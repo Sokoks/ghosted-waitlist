@@ -49,17 +49,87 @@
     }
   }
 
+  // TikTok / IG / FB in-app browsers often block autoplay — show tap-to-play.
   const appVideo = document.getElementById("app-video");
-  if (appVideo) {
+  const videoFrame = document.getElementById("video-frame");
+  const videoPlayBtn = document.getElementById("video-play");
+  const ua = navigator.userAgent || "";
+  const isInAppBrowser =
+    /TikTok|BytedanceWebview|musical_ly|Instagram|FBAN|FBAV|Line\//i.test(ua) ||
+    isTelegram;
+
+  if (appVideo && videoFrame) {
     appVideo.muted = true;
+    appVideo.defaultMuted = true;
     appVideo.playsInline = true;
-    const tryPlay = () => {
-      const playPromise = appVideo.play();
-      if (playPromise?.catch) playPromise.catch(() => {});
+    appVideo.setAttribute("playsinline", "");
+    appVideo.setAttribute("webkit-playsinline", "");
+    appVideo.setAttribute("muted", "");
+
+    const showPlay = () => {
+      videoFrame.classList.add("is-paused");
+      videoFrame.classList.remove("is-playing");
     };
-    tryPlay();
+    const hidePlay = () => {
+      videoFrame.classList.remove("is-paused");
+      videoFrame.classList.add("is-playing");
+    };
+
+    const tryPlay = () => {
+      appVideo.muted = true;
+      const playPromise = appVideo.play();
+      if (playPromise?.then) {
+        return playPromise.then(hidePlay).catch(() => {
+          showPlay();
+          return false;
+        });
+      }
+      showPlay();
+      return Promise.resolve(false);
+    };
+
+    const startFromGesture = () => {
+      tryPlay();
+    };
+
+    if (isInAppBrowser) {
+      showPlay();
+    } else {
+      showPlay();
+      tryPlay();
+    }
+
+    videoPlayBtn?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      startFromGesture();
+    });
+
+    videoFrame.addEventListener(
+      "click",
+      () => {
+        if (appVideo.paused) startFromGesture();
+      },
+      { passive: true }
+    );
+
+    // First user gesture anywhere unlocks autoplay in many WebViews
+    const unlockOnce = () => {
+      if (!appVideo.paused) return;
+      tryPlay();
+    };
+    ["touchstart", "pointerdown", "click"].forEach((evt) => {
+      document.addEventListener(evt, unlockOnce, { once: true, passive: true });
+    });
+
+    appVideo.addEventListener("playing", hidePlay);
+    appVideo.addEventListener("pause", () => {
+      if (!appVideo.ended) showPlay();
+    });
+    appVideo.addEventListener("ended", showPlay);
+
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) tryPlay();
+      if (!document.hidden && !isInAppBrowser) tryPlay();
     });
   }
 

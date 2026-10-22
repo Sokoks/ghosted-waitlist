@@ -82,7 +82,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="g-35.css" />
+    <link rel="stylesheet" href="g-35.css?v=10" />
   </head>
   <body>
     <div class="page-bg" aria-hidden="true"></div>
@@ -137,20 +137,29 @@
         <div class="section__head">
           <h2>Pogledaj Ghosted u akciji</h2>
         </div>
-        <div class="video-frame">
-          <!-- Zamijeni src svojim videom (npr. assets/demo.mp4) ili YouTube/Vimeo embedom -->
+        <div class="video-frame" id="video-frame">
           <video
             id="app-video"
-            autoplay
             muted
             loop
             playsinline
-            preload="auto"
-            poster="assets/video-poster.svg"
+            webkit-playsinline
+            preload="metadata"
+            controlslist="nodownload noplaybackrate"
+            disablepictureinpicture
           >
             <source src="assets/demo.mp4" type="video/mp4" />
             Tvoj preglednik ne podržava video.
           </video>
+          <button
+            type="button"
+            class="video-play"
+            id="video-play"
+            aria-label="Pokreni video"
+          >
+            <span class="video-play__icon" aria-hidden="true"></span>
+            <span class="video-play__label">Pokreni</span>
+          </button>
         </div>
       </section>
 
@@ -318,6 +327,6 @@
     </div>
 
     <script src="config.js?v=6"></script>
-    <script src="app.js?v=9"></script>
+    <script src="app.js?v=10"></script>
   </body>
 </html>
