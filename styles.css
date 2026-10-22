@@ -391,12 +391,15 @@ html[data-theme="dark"] .theme-toggle__icon--sun {
   -webkit-tap-highlight-color: transparent;
 }
 
-.video-frame video {
+.video-frame video,
+.video-frame .app-video {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #0a1628;
+  /* Prevent TikTok WebView from hijacking taps into native fullscreen player */
+  pointer-events: none;
 }
 
 .video-play {

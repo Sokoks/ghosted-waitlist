@@ -82,7 +82,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="g-35.css?v=10" />
+    <link rel="stylesheet" href="g-35.css?v=11" />
   </head>
   <body>
     <div class="page-bg" aria-hidden="true"></div>
@@ -140,16 +140,23 @@
         <div class="video-frame" id="video-frame">
           <video
             id="app-video"
+            class="app-video"
+            autoplay
             muted
+            defaultmuted
             loop
             playsinline
             webkit-playsinline
-            preload="metadata"
-            controlslist="nodownload noplaybackrate"
+            preload="auto"
+            controlslist="nodownload noplaybackrate noremoteplayback"
             disablepictureinpicture
+            disableremoteplayback
+            x5-playsinline="true"
+            x5-video-player-type="h5"
+            x5-video-player-fullscreen="false"
+            src="assets/demo.mp4"
           >
             <source src="assets/demo.mp4" type="video/mp4" />
-            Tvoj preglednik ne podržava video.
           </video>
           <button
             type="button"
@@ -327,6 +334,6 @@
     </div>
 
     <script src="config.js?v=6"></script>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=11"></script>
   </body>
 </html>

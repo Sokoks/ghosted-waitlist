@@ -49,22 +49,38 @@
     }
   }
 
-  // TikTok / IG / FB in-app browsers often block autoplay — show tap-to-play.
+  // Autoplay in TikTok / ByteDance WebView is flaky — hammer play() + gesture unlock.
   const appVideo = document.getElementById("app-video");
   const videoFrame = document.getElementById("video-frame");
   const videoPlayBtn = document.getElementById("video-play");
   const ua = navigator.userAgent || "";
+  const isTikTok = /TikTok|BytedanceWebview|musical_ly|TTWebView/i.test(ua);
   const isInAppBrowser =
-    /TikTok|BytedanceWebview|musical_ly|Instagram|FBAN|FBAV|Line\//i.test(ua) ||
+    isTikTok ||
+    /Instagram|FBAN|FBAV|Line\//i.test(ua) ||
     isTelegram;
 
   if (appVideo && videoFrame) {
+    const absoluteSrc = new URL("assets/demo.mp4", window.location.href).href;
+    if (appVideo.getAttribute("src") !== absoluteSrc) {
+      appVideo.setAttribute("src", absoluteSrc);
+      appVideo.src = absoluteSrc;
+    }
+
     appVideo.muted = true;
     appVideo.defaultMuted = true;
+    appVideo.volume = 0;
     appVideo.playsInline = true;
+    appVideo.setAttribute("muted", "");
+    appVideo.setAttribute("autoplay", "");
     appVideo.setAttribute("playsinline", "");
     appVideo.setAttribute("webkit-playsinline", "");
-    appVideo.setAttribute("muted", "");
+    appVideo.setAttribute("x5-playsinline", "true");
+    appVideo.setAttribute("x5-video-player-type", "h5");
+    appVideo.setAttribute("x5-video-player-fullscreen", "false");
+
+    let playAttempts = 0;
+    let unlocked = false;
 
     const showPlay = () => {
       videoFrame.classList.add("is-paused");
@@ -76,61 +92,146 @@
     };
 
     const tryPlay = () => {
-      appVideo.muted = true;
-      const playPromise = appVideo.play();
+      playAttempts += 1;
+      try {
+        appVideo.muted = true;
+        appVideo.defaultMuted = true;
+        appVideo.volume = 0;
+        if (appVideo.readyState < 2) appVideo.load();
+      } catch {
+        /* ignore */
+      }
+
+      let playPromise;
+      try {
+        playPromise = appVideo.play();
+      } catch {
+        showPlay();
+        return Promise.resolve(false);
+      }
+
       if (playPromise?.then) {
-        return playPromise.then(hidePlay).catch(() => {
-          showPlay();
-          return false;
-        });
+        return playPromise
+          .then(() => {
+            unlocked = true;
+            hidePlay();
+            return true;
+          })
+          .catch(() => {
+            showPlay();
+            return false;
+          });
+      }
+
+      if (!appVideo.paused) {
+        unlocked = true;
+        hidePlay();
+        return Promise.resolve(true);
       }
       showPlay();
       return Promise.resolve(false);
     };
 
-    const startFromGesture = () => {
-      tryPlay();
-    };
+    // First paint: show overlay, then keep trying autoplay.
+    showPlay();
+    tryPlay();
 
-    if (isInAppBrowser) {
-      showPlay();
-    } else {
-      showPlay();
+    ["loadedmetadata", "loadeddata", "canplay", "canplaythrough"].forEach(
+      (evt) => {
+        appVideo.addEventListener(evt, () => {
+          if (appVideo.paused) tryPlay();
+        });
+      }
+    );
+
+    // Retry for a few seconds — TikTok often allows play only after buffer.
+    const retryTimer = window.setInterval(() => {
+      if (!appVideo.paused || playAttempts > 24) {
+        window.clearInterval(retryTimer);
+        return;
+      }
       tryPlay();
+    }, 400);
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && appVideo.paused) tryPlay();
+          });
+        },
+        { threshold: 0.25 }
+      );
+      io.observe(videoFrame);
     }
+
+    const unlockFromGesture = (event) => {
+      // Don't let TikTok steal the video into native fullscreen viewer.
+      if (event?.target === appVideo) {
+        event.preventDefault?.();
+        event.stopPropagation?.();
+      }
+      tryPlay().then((ok) => {
+        if (ok) unlocked = true;
+      });
+    };
 
     videoPlayBtn?.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      startFromGesture();
+      unlockFromGesture(event);
     });
 
     videoFrame.addEventListener(
       "click",
-      () => {
-        if (appVideo.paused) startFromGesture();
+      (event) => {
+        if (!appVideo.paused) return;
+        unlockFromGesture(event);
       },
-      { passive: true }
+      { passive: false }
     );
 
-    // First user gesture anywhere unlocks autoplay in many WebViews
-    const unlockOnce = () => {
+    // Any early page gesture often unlocks muted autoplay in WebViews.
+    const gestureUnlock = () => {
       if (!appVideo.paused) return;
       tryPlay();
     };
-    ["touchstart", "pointerdown", "click"].forEach((evt) => {
-      document.addEventListener(evt, unlockOnce, { once: true, passive: true });
+    ["touchstart", "touchend", "pointerdown", "click"].forEach((evt) => {
+      document.addEventListener(evt, gestureUnlock, {
+        once: !isTikTok,
+        passive: true,
+      });
     });
+    // TikTok: keep listening for scroll until play succeeds
+    if (isTikTok) {
+      const onScrollTry = () => {
+        if (!appVideo.paused) {
+          window.removeEventListener("scroll", onScrollTry);
+          return;
+        }
+        tryPlay();
+      };
+      window.addEventListener("scroll", onScrollTry, { passive: true });
+    }
 
-    appVideo.addEventListener("playing", hidePlay);
+    appVideo.addEventListener("playing", () => {
+      unlocked = true;
+      hidePlay();
+      window.clearInterval(retryTimer);
+    });
     appVideo.addEventListener("pause", () => {
       if (!appVideo.ended) showPlay();
     });
-    appVideo.addEventListener("ended", showPlay);
 
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && !isInAppBrowser) tryPlay();
+      if (!document.hidden && appVideo.paused) tryPlay();
     });
+    window.addEventListener("pageshow", () => {
+      if (appVideo.paused) tryPlay();
+    });
+
+    void unlocked;
+    void isInAppBrowser;
   }
 
   themeToggle?.addEventListener("click", () => {

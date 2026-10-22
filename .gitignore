@@ -8,3 +8,4 @@ node_modules/
 dist/
 .vercel/
 .netlify/
+assets/demo.source.mp4
